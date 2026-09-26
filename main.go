@@ -2,15 +2,24 @@ package main
 
 import (
 	"fmt"
-	handler "groupie-tracker/Handlers"
-	"log"
+	funct "groupie-tracker/funct"
+	"groupie-tracker/structdata"
 	"net/http"
 )
 
 func main() {
-	// authors image, location, dates, relations all have link
 
-	http.HandleFunc("/", handler.HomeHandler)
-	fmt.Println("Server running at http://localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	err := structdata.LoadData()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	http.HandleFunc("/", funct.ProtectionForHandler(funct.HomePage))
+	http.HandleFunc("/artist", funct.ProtectionForHandler(funct.ArtistPage))
+	http.HandleFunc("/search", funct.ProtectionForHandler(funct.Search))
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	err = http.ListenAndServe(":8080", nil)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
