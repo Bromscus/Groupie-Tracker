@@ -1,25 +1,29 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Artists</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
+    <link rel="stylesheet" href="/static/style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
     <h1>Artists</h1>
     <form action="/search" method="get">
-        <input type="text" name="q">
-        <button type="submit">Search</button>
+      <input type="text" name="q" />
+      <button type="submit">Search</button>
     </form>
     <div class="artist-grid">
-         {{range .}}
-        <a class="artist-card" href="/artist?id={{.ID}}">
-            <img src="{{.Image}}" alt="{{.Name}}">
-            <div class="artist-name">{{.Name}}</div>
-        </a> 
-        {{end}}
+      {{if .}} {{range .}}
+      <a class="artist-card" href="/artist?id={{.ID}}">
+        <img src="{{.Image}}" alt="{{.Name}}" />
+        <div class="artist-name">{{.Name}}</div>
+      </a>
+      {{end}} {{else}}
+      <p class="no-results">
+        No artists found.
+        <a href="/">Try another search</a>
+      </p>
+      {{end}}
     </div>
-   
-</body>     
+  </body>
 </html>
