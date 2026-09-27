@@ -8,24 +8,24 @@
   </head>
   <body>
     <h1>Artists</h1>
-    <!-- <form action="/search" method="get">
+    <form action="/search" method="get">
       <input type="text" name="q" />
       <button type="submit">Search</button>
-    </form> -->
+    </form>
     <div class="artist-grid">
-      <!-- {{if .}} -->
-      {{range .Artists}}
+      {{if .}}
+      {{range .}}
       <a class="artist-card" href="/artist?id={{.ID}}">
         <img src="{{.Image}}" alt="{{.Name}}" />
         <div class="artist-name">{{.Name}}</div>
       </a>
       {{end}}
-      <!-- {{else}}
+      {{else}}
       <p class="no-results">
         No artists found.
         <a href="/">Try another search</a>
       </p>
-      {{end}} -->
+      {{end}}
     </div>
   </body>
 </html>

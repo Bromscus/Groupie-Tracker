@@ -2,7 +2,7 @@ package functions
 
 import (
 	"encoding/json"
-	"log"
+	"fmt"
 	"net/http"
 	"strings"
 )
@@ -14,15 +14,36 @@ type API struct {
 	Relation  string `json:"relation"`
 }
 type Artist struct {
+	ID           int                 `json:"id"`
+	Image        string              `json:"image"`
+	Name         string              `json:"name"`
+	Members      []string            `json:"members"`
+	CreationDate int                 `json:"creationDate"`
+	FirstAlbum   string              `json:"firstAlbum"`
+	Locations    []string            `json:"-"`
+	Dates        []string            `json:"-"`
+	Relations    map[string][]string `json:"-"`
+}
+
+type artistRecord struct {
 	ID           int      `json:"id"`
 	Image        string   `json:"image"`
 	Name         string   `json:"name"`
 	Members      []string `json:"members"`
 	CreationDate int      `json:"creationDate"`
 	FirstAlbum   string   `json:"firstAlbum"`
-	Locations    string   `json:"locations"`
-	ConcertDates string   `json:"concertDates"`
-	Relations    string   `json:"relations"`
+}
+
+type locationIndex struct {
+	Index []Location `json:"index"`
+}
+
+type dateIndex struct {
+	Index []Date `json:"index"`
+}
+
+type relationIndex struct {
+	Index []Relation `json:"index"`
 }
 
 type Location struct {
@@ -42,46 +63,72 @@ type Relation struct {
 }
 
 func reader() ([]Artist, error) {
-	url := "https://groupietrackers.herokuapp.com/api"
+	const baseURL = "https://groupietrackers.herokuapp.com/api"
+	var api API
+	if err := fetchJSON(baseURL, &api); err != nil {
+		return nil, err
+	}
+
+	var records []artistRecord
+	if err := fetchJSON(api.Artists, &records); err != nil {
+		return nil, err
+	}
+	var locations locationIndex
+	if err := fetchJSON(api.Locations, &locations); err != nil {
+		return nil, err
+	}
+	var dates dateIndex
+	if err := fetchJSON(api.Dates, &dates); err != nil {
+		return nil, err
+	}
+	var relations relationIndex
+	if err := fetchJSON(api.Relation, &relations); err != nil {
+		return nil, err
+	}
+
+	locationsByID := make(map[int][]string, len(locations.Index))
+	for _, location := range locations.Index {
+		locationsByID[location.ID] = location.Locations
+	}
+	datesByID := make(map[int][]string, len(dates.Index))
+	for _, date := range dates.Index {
+		datesByID[date.ID] = date.Dates
+	}
+	relationsByID := make(map[int]map[string][]string, len(relations.Index))
+	for _, relation := range relations.Index {
+		relationsByID[relation.ID] = relation.DatesLocations
+	}
+
+	artists := make([]Artist, 0, len(records))
+	for _, record := range records {
+		artist := Artist{
+			ID:           record.ID,
+			Image:        record.Image,
+			Name:         record.Name,
+			Members:      record.Members,
+			CreationDate: record.CreationDate,
+			FirstAlbum:   record.FirstAlbum,
+			Locations:    locationsByID[record.ID],
+			Dates:        datesByID[record.ID],
+			Relations:    relationsByID[record.ID],
+		}
+		if strings.EqualFold(artist.Name, "Mamonas Assassinas") {
+			artist.Image = "style/Mamonas_Assassinas.jpg"
+		}
+		artists = append(artists, artist)
+	}
+	return artists, nil
+}
+
+func fetchJSON(url string, target any) error {
 	response, err := http.Get(url)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
-		log.Fatalf("Error: status code %d", response.StatusCode)
+		return fmt.Errorf("unexpected status code %d from %s", response.StatusCode, url)
 	}
-	api := API{}
-
-	decoder := json.NewDecoder(response.Body)
-	decoder.DisallowUnknownFields()
-
-	if err := decoder.Decode(&api); err != nil {
-		log.Fatal(err)
-	}
-
-	artistsResponse, err := http.Get(api.Artists)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer artistsResponse.Body.Close()
-
-	if artistsResponse.StatusCode != http.StatusOK {
-		log.Fatal("failed to fetch artists")
-	}
-
-	var artists []Artist
-
-	decoder = json.NewDecoder(artistsResponse.Body)
-
-	if err := decoder.Decode(&artists); err != nil {
-		log.Fatal(err)
-	}
-	for i := range artists {
-		if strings.EqualFold(artists[i].Name, "Mamonas Assassinas") {
-			artists[i].Image = "templates/Mamonas_Assassinas.jpg"
-		}
-	}
-	return artists, nil
+	return json.NewDecoder(response.Body).Decode(target)
 }

@@ -14,6 +14,8 @@ func main() {
 		http.StripPrefix("/style/", http.FileServer(http.Dir("style"))),
 	)
 
+	http.HandleFunc("/artist", handlers.ArtistHandler)
+	http.HandleFunc("/search", handlers.SearchHandler)
 	http.HandleFunc("/", handlers.HomeHandler)
 	fmt.Println("Server running at http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))

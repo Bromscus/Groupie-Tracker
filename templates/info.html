@@ -2,51 +2,67 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>{{.Artist.Name}}</title>
+    <title>{{.Name}}</title>
     <link rel="stylesheet" href="/style/style.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
   <body>
-    <div class="artist-page">
-      <div class="artist-header">
-        <img
-          class="artist-image"
-          src="{{.Artist.Image}}"
-          alt="{{.Artist.Name}}"
-        />
+    <main class="artist-page">
+      <header class="artist-header">
+        <img class="artist-image" src="{{.Image}}" alt="{{.Name}}" />
         <div>
-          <h1>{{.Artist.Name}}</h1>
-          <p>First Album: {{.Artist.FirstAlbum}}</p>
-          <p>Creation Date: {{.Artist.CreationDate}}</p>
+          <h1>{{.Name}}</h1>
+          <p>Formed: {{.CreationDate}}</p>
+          <p>First album: {{.FirstAlbum}}</p>
         </div>
-      </div>
+      </header>
 
-      <div class="artist-section">
+      <section class="artist-section">
         <h2>Members</h2>
         <ul>
-          {{range .Artist.Members}}
+          {{range .Members}}
           <li>{{.}}</li>
           {{end}}
         </ul>
-      </div>
+      </section>
 
-      <div class="artist-section">
+      <section class="artist-section">
         <h2>Locations</h2>
         <ul>
-          {{range .Location.Locations}}
+          {{range .Locations}}
           <li>{{.}}</li>
+          {{else}}
+          <li>No locations available.</li>
           {{end}}
         </ul>
-      </div>
+      </section>
 
-      <div class="artist-section">
-        <h2>Concerts</h2>
+      <section class="artist-section">
+        <h2>Concert Dates</h2>
         <ul>
-          {{range $key, $value := .Relation.DatesLocations}}
-          <li><strong>{{$key}}</strong>: {{range $value}}{{.}} {{end}}</li>
+          {{range .Dates}}
+          <li>{{.}}</li>
+          {{else}}
+          <li>No concert dates available.</li>
           {{end}}
         </ul>
-      </div>
-    </div>
+      </section>
+
+      <section class="artist-section">
+        <h2>Relations</h2>
+        <ul>
+          {{range $location, $dates := .Relations}}
+          <li>
+            <strong>{{$location}}</strong>: {{range $index, $date :=
+            $dates}}{{if $index}}, {{end}}{{$date}}{{end}}
+          </li>
+          {{else}}
+          <li>No relations available.</li>
+          {{end}}
+        </ul>
+      </section>
+
+      <a class="back-link" href="/">Back to artists</a>
+    </main>
   </body>
 </html>
