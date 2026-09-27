@@ -1,52 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>{{.Artist.Name}}</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
-
+    <link rel="stylesheet" href="/static/style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
     <div class="artist-page">
-
-        <div class="artist-header">
-            <img class="artist-image" src="{{.Artist.Image}}" alt="{{.Artist.Name}}">
-            <div>
-                <h1>{{.Artist.Name}}</h1>
-                <p>First Album: {{.Artist.FirstAlbum}}</p>
-                <p>Creation Date: {{.Artist.CreationDate}}</p>
-            </div>
+      <div class="artist-header">
+        <img
+          class="artist-image"
+          src="{{.Artist.Image}}"
+          alt="{{.Artist.Name}}"
+        />
+        <div>
+          <h1>{{.Artist.Name}}</h1>
+          <p>First Album: {{.Artist.FirstAlbum}}</p>
+          <p>Creation Date: {{.Artist.CreationDate}}</p>
         </div>
+      </div>
 
-        <div class="artist-section">
-            <h2>Members</h2>
-            <ul>
-                {{range .Artist.Members}}
-                <li>{{.}}</li>
-                {{end}}
-            </ul>
-        </div>
+      <div class="artist-section">
+        <h2>Members</h2>
+        <ul>
+          {{range .Artist.Members}}
+          <li>{{.}}</li>
+          {{end}}
+        </ul>
+      </div>
 
-        <div class="artist-section">
-            <h2>Locations</h2>
-            <ul>
-                {{range .Location.Locations}}
-                <li>{{.}}</li>
-                {{end}}
-            </ul>
-        </div>
+      <div class="artist-section">
+        <h2>Locations</h2>
+        <ul>
+          {{range .Location.Locations}}
+          <li>{{.}}</li>
+          {{end}}
+        </ul>
+      </div>
 
-        <div class="artist-section">
-            <h2>Concerts</h2>
-            <ul>
-                {{range $key, $value := .Relation.DatesLocations}}
-                <li><strong>{{$key}}</strong>: {{range $value}}{{.}} {{end}}</li>
-                {{end}}
-            </ul>
-        </div>
-
+      <div class="artist-section">
+        <h2>Concerts</h2>
+        <ul>
+          {{range $key, $value := .Relation.DatesLocations}}
+          <li><strong>{{$key}}</strong>: {{range $value}}{{.}} {{end}}</li>
+          {{end}}
+        </ul>
+      </div>
     </div>
-
-</body>
+  </body>
 </html>

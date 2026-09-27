@@ -13,9 +13,10 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	http.HandleFunc("/", funct.ProtectionForHandler(funct.HomePage))
-	http.HandleFunc("/artist", funct.ProtectionForHandler(funct.ArtistPage))
-	http.HandleFunc("/search", funct.ProtectionForHandler(funct.Search))
+	funct.LoadTemplates()
+	http.HandleFunc("/", funct.HomePage)
+	http.HandleFunc("/artist", funct.ArtistPage)
+	http.HandleFunc("/search", funct.Search)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	http.Handle("/picture/", http.StripPrefix("/picture/", http.FileServer(http.Dir("picture"))))
 	fmt.Println("Server running at http://localhost:8080")

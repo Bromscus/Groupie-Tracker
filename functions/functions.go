@@ -1,153 +1,82 @@
 package funct
 
 import (
+	"bytes"
 	"fmt"
-	"groupie-tracker/errorpage"
 	"groupie-tracker/structdata"
-	"html/template"
 	"net/http"
 	"strconv"
 	"strings"
 )
 
 func HomePage(w http.ResponseWriter, r *http.Request) {
-	
-	if r.URL.Path != "/" || r.Method != "GET" {
-		errorpage.RenderError(w, "Page not found", http.StatusNotFound)
-		return
-	}
-	
-	templ, err := template.ParseFiles("templates/index.html")
-	if err != nil {
-		errorpage.RenderError(w, "internal server error", http.StatusInternalServerError)
+	if r.URL.Path != "/" {
+		ErrorPage(w, "Page not found", "Please check that the website address is spelled correctly or go to our home page.", http.StatusNotFound)
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	err = templ.Execute(w, structdata.Artists)
-	if err != nil {
-		fmt.Println(err)
+	if r.Method != http.MethodGet {
+		w.Header().Set("Allow", http.MethodGet)
+		ErrorPage(w, "Method not allowed", "This page only supports GET requests.", http.StatusMethodNotAllowed)
 		return
 	}
+
+	renderTemplate(w, "templates/index.html", structdata.Artists)
 }
 
 func ArtistPage(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		errorpage.RenderError(w, "method not allowed", http.StatusMethodNotAllowed)
+	if r.Method != http.MethodGet {
+		w.Header().Set("Allow", http.MethodGet)
+		ErrorPage(w, "Method not allowed", "This page only supports GET requests.", http.StatusMethodNotAllowed)
 		return
 	}
-	idStr := r.URL.Query().Get("id")
-	idNum, err := strconv.Atoi(idStr)
+
+	idNum, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil {
-		errorpage.RenderError(w, "invalid id", http.StatusBadRequest)
+		ErrorPage(w, "Invalid artist ID", "Please provide a valid artist ID.", http.StatusBadRequest)
 		return
 	}
 
-	
-	var detail structdata.ArtistDetails
-	foundArtist := false
-	foundLocation := false
-	foundDate := false
-	foundRelation := false 
-	for _, artist := range structdata.Artists {
-		if artist.ID == idNum {
-			detail.Artist = artist
-			foundArtist = true
-			break
-		}
-
-	}
-	for _, location := range structdata.Locations {
-		if location.ID == idNum {
-			detail.Location = location
-			foundLocation = true
-			break
-		}
-
-	}
-	for _, date := range structdata.Dates {
-		if date.ID == idNum {
-			detail.Date = date
-			foundDate = true
-			break
-		}
-
-	}
-	for _, relation := range structdata.Relations {
-		if relation.ID == idNum {
-			detail.Relation = relation
-			foundRelation = true
-			break
-		}
-
-	}
-	if !foundArtist  {
-		errorpage.RenderError(w, "artist data not found", http.StatusNotFound)
-		return
-	}
-	if !foundLocation  {
-		errorpage.RenderError(w, "location data not found", http.StatusNotFound)
-		return
-	}
-	if !foundDate  {
-		errorpage.RenderError(w, "date data not found", http.StatusNotFound)
-		return
-	}
-	if !foundRelation  {
-		errorpage.RenderError(w, "relation data not found", http.StatusNotFound)
+	detail, found := structdata.GetArtistDetails(idNum)
+	if !found {
+		ErrorPage(w, "Artist not found", "No complete artist data exists with that ID.", http.StatusNotFound)
 		return
 	}
 
-
-
-
-	tmple, err := template.ParseFiles("templates/artist.html")
-	if err != nil {
-		http.Error(w,"error", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	err = tmple.Execute(w, detail)
-	if err != nil {
-		http.Error(w,"error", http.StatusInternalServerError)
-		return
-	}
-	
-}
-
-func ProtectionForHandler(next http.HandlerFunc) http.HandlerFunc {
-	return  func(w http.ResponseWriter, r *http.Request) {
-		defer func(){
-			if err := recover(); err != nil {
-			http.Error(w, "internal server error", http.StatusInternalServerError)
-		}
-		}()
-		next(w,r)
-	}
+	renderTemplate(w, "templates/artist.html", detail)
 }
 
 func Search(w http.ResponseWriter, r *http.Request) {
-	matchedArtists := []structdata.Artist{}
-	artistName := r.URL.Query().Get("q")
-	artistName = strings.TrimSpace(artistName)
-
-	for _, artist := range structdata.Artists {
-		if strings.Contains(strings.ToLower(artist.Name), strings.ToLower(artistName)) {
-			matchedArtists = append(matchedArtists, artist)
-		}
+	if r.Method != http.MethodGet {
+		w.Header().Set("Allow", http.MethodGet)
+		ErrorPage(w, "Method not allowed", "This page only supports GET requests.", http.StatusMethodNotAllowed)
+		return
 	}
 
-	tmple, err := template.ParseFiles("templates/index.html")
-	if err != nil {
-		http.Error(w, "internal server error", http.StatusInternalServerError)
-		return 
+	search := strings.ToLower(strings.TrimSpace(r.URL.Query().Get("q")))
+
+	matchedArtists := structdata.SearchArtists(search)
+
+	renderTemplate(w, "templates/index.html", matchedArtists)
+}
+
+func renderTemplate(w http.ResponseWriter, path string, data any) {
+	templ := templates[path]
+	if templ == nil {
+		ErrorPage(w, "Internal server error", "The page could not be loaded.", http.StatusInternalServerError)
+		return
+	}
+
+	var body bytes.Buffer
+
+	if err := templ.Execute(&body, data); err != nil {
+		ErrorPage(w, "Internal server error", "The page could not be rendered.", http.StatusInternalServerError)
+		return
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	err = tmple.Execute(w, matchedArtists)
-	if err != nil {
-		http.Error(w, "internal server error", http.StatusInternalServerError)
-		return 
+
+	if _, err := w.Write(body.Bytes()); err != nil {
+		fmt.Println(err)
 	}
 }

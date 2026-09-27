@@ -2,31 +2,28 @@ package structdata
 
 import (
 	"encoding/json"
-	"fmt"
-	"io"
 	"net/http"
 	"strings"
 )
 
-var Artists []Artist
-var Locations []Location
-var Dates []Date
-var Relations []Relation
-
-
+var (
+	Artists   []Artist
+	Locations []Location
+	Dates     []Date
+	Relations []Relation
+)
 
 type Artist struct {
-	Name string 
-	ID int 
-	Members []string
-	Image string 
-	FirstAlbum string
+	Name         string
+	ID           int
+	Members      []string
+	Image        string
+	FirstAlbum   string
 	CreationDate int
-
 }
 
 type Location struct {
-	ID int 
+	ID        int
 	Locations []string
 }
 
@@ -35,7 +32,7 @@ type LocationWrapper struct {
 }
 
 type Date struct {
-	ID int 
+	ID    int
 	Dates []string
 }
 
@@ -44,7 +41,7 @@ type DateWrapper struct {
 }
 
 type Relation struct {
-	ID int 
+	ID             int
 	DatesLocations map[string][]string
 }
 
@@ -52,80 +49,25 @@ type RelationWrapper struct {
 	Index []Relation
 }
 
-
 type ArtistDetails struct {
-	Artist Artist
+	Artist   Artist
 	Location Location
 	Relation Relation
-	Date Date
+	Date     Date
 }
 
-func FetchData(url string) []byte {
+func FetchData(url string, destination any) error {
 	resp, err := http.Get(url)
 	if err != nil {
-		fmt.Println(err)
-		return nil
+		return err
 	}
-
-	body, err := io.ReadAll(resp.Body)
 	defer resp.Body.Close()
-	if err != nil {
-		fmt.Println(err)
-		return nil
-	}
 
-	return body
-
+	return json.NewDecoder(resp.Body).Decode(destination)
 }
 
-func UnmarshalsArtist(rawBytes []byte) ([]Artist, error) {
-	var data []Artist
-
-	err := json.Unmarshal(rawBytes, &data)
-	if err != nil {
-		return nil, err
-	}
-	return data, nil
-}
-
-func UnmarshalsLocation(rawBytes []byte) ([]Location , error) {
-	var data LocationWrapper
-
-	err := json.Unmarshal(rawBytes, &data)
-	if err != nil {
-		return nil, err
-	}
-	return data.Index, nil
-}
-
-func UnmarshalsDate(rawBytes []byte) ([]Date, error) {
-	var data DateWrapper
-
-	err := json.Unmarshal(rawBytes, &data)
-	if err != nil {
-		return nil, err
-	}
-	return data.Index, nil
-}
-
-func UnmarshalsRelation(rawBytes []byte) ([]Relation, error) {
-	var data RelationWrapper
-
-	err := json.Unmarshal(rawBytes, &data)
-	if err != nil {
-		return nil, err
-	}
-	return data.Index, nil
-}
-
-
-func LoadData() error{
-	var err error
-	 
-	artistsRawBytes := FetchData("https://groupietrackers.herokuapp.com/api/artists")
-
-	Artists, err = UnmarshalsArtist(artistsRawBytes)
-	if err != nil {
+func LoadData() error {
+	if err := FetchData("https://groupietrackers.herokuapp.com/api/artists", &Artists); err != nil {
 		return err
 	}
 	for i := range Artists {
@@ -135,27 +77,24 @@ func LoadData() error{
 		}
 	}
 
-	locationsRawBytes := FetchData("https://groupietrackers.herokuapp.com/api/locations")
-
-	Locations, err = UnmarshalsLocation(locationsRawBytes)
-	if err != nil {
+	var locations LocationWrapper
+	if err := FetchData("https://groupietrackers.herokuapp.com/api/locations", &locations); err != nil {
 		return err
 	}
+	Locations = locations.Index
 
-	datesRawBytes := FetchData("https://groupietrackers.herokuapp.com/api/dates")
-
-	Dates, err = UnmarshalsDate(datesRawBytes)
-	if err != nil {
-		return err 
+	var dates DateWrapper
+	if err := FetchData("https://groupietrackers.herokuapp.com/api/dates", &dates); err != nil {
+		return err
 	}
+	Dates = dates.Index
 
-
-	relationsRawBytes := FetchData("https://groupietrackers.herokuapp.com/api/relation")
-
-	Relations, err = UnmarshalsRelation(relationsRawBytes)
-	if err != nil {
-		return err 
+	var relations RelationWrapper
+	if err := FetchData("https://groupietrackers.herokuapp.com/api/relation", &relations); err != nil {
+		return err
 	}
+	Relations = relations.Index
 
+	buildIndexes()
 	return nil
 }
