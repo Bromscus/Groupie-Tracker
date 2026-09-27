@@ -2,6 +2,7 @@ package funct
 
 import (
 	"fmt"
+	"groupie-tracker/errorpage"
 	"groupie-tracker/structdata"
 	"html/template"
 	"net/http"
@@ -12,13 +13,13 @@ import (
 func HomePage(w http.ResponseWriter, r *http.Request) {
 	
 	if r.URL.Path != "/" || r.Method != "GET" {
-		http.Error(w,"page not found", http.StatusNotFound)
+		errorpage.RenderError(w, "Page not found", http.StatusNotFound)
 		return
 	}
 	
 	templ, err := template.ParseFiles("templates/index.html")
 	if err != nil {
-		http.Error(w,"error", http.StatusInternalServerError)
+		errorpage.RenderError(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
 
@@ -32,13 +33,13 @@ func HomePage(w http.ResponseWriter, r *http.Request) {
 
 func ArtistPage(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		errorpage.RenderError(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 	idStr := r.URL.Query().Get("id")
 	idNum, err := strconv.Atoi(idStr)
 	if err != nil {
-		http.Error(w,"Invalid id", http.StatusBadRequest)
+		errorpage.RenderError(w, "invalid id", http.StatusBadRequest)
 		return
 	}
 
@@ -81,19 +82,19 @@ func ArtistPage(w http.ResponseWriter, r *http.Request) {
 
 	}
 	if !foundArtist  {
-		http.Error(w, "artist data not found", http.StatusNotFound)
+		errorpage.RenderError(w, "artist data not found", http.StatusNotFound)
 		return
 	}
 	if !foundLocation  {
-		http.Error(w, "location data not found", http.StatusNotFound)
+		errorpage.RenderError(w, "location data not found", http.StatusNotFound)
 		return
 	}
 	if !foundDate  {
-		http.Error(w, "date data not found", http.StatusNotFound)
+		errorpage.RenderError(w, "date data not found", http.StatusNotFound)
 		return
 	}
 	if !foundRelation  {
-		http.Error(w, "Relation data not found", http.StatusNotFound)
+		errorpage.RenderError(w, "relation data not found", http.StatusNotFound)
 		return
 	}
 

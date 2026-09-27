@@ -136,3 +136,54 @@ img {
 .artist-section li:last-child {
     border-bottom: none;
 }
+
+.error-page {
+    max-width: 600px;
+    margin: 100px auto;
+    text-align: center;
+}
+
+.error-page h1 {
+    font-size: 80px;
+    margin-bottom: 20px;
+}
+
+.error-page p {
+    font-size: 20px;
+    color: #DADADA;
+    margin-bottom: 30px;
+}
+
+.back-link {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #D4AF37;
+    color: #0A0A0A;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+.back-link:hover {
+    background-color: #F1D06B;
+}
+
+
+@media (max-width: 600px) {
+    .artist-grid {
+        grid-template-columns: 1fr;
+    }
+
+    form {
+        flex-direction: column;
+    }
+
+    input[type="text"] {
+        width: 100%;
+    }
+
+    .artist-header {
+        flex-direction: column;
+        text-align: center;
+    }
+}
