@@ -1,4 +1,4 @@
-package funct
+package functions
 
 import (
 	"groupie-tracker/structdata"

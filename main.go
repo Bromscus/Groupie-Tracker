@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	funct "groupie-tracker/functions"
+	functions "groupie-tracker/Handlers"
 	"groupie-tracker/structdata"
 	"net/http"
 )
@@ -13,10 +13,10 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	funct.LoadTemplates()
-	http.HandleFunc("/", funct.HomePage)
-	http.HandleFunc("/artist", funct.ArtistPage)
-	http.HandleFunc("/search", funct.Search)
+	functions.LoadTemplates()
+	http.HandleFunc("/", functions.HomePage)
+	http.HandleFunc("/artist", functions.ArtistPage)
+	http.HandleFunc("/search", functions.Search)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	http.Handle("/picture/", http.StripPrefix("/picture/", http.FileServer(http.Dir("picture"))))
 	fmt.Println("Server running at http://localhost:8080")
