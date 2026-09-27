@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 )
 
 var Artists []Artist
@@ -126,6 +127,12 @@ func LoadData() error{
 	Artists, err = UnmarshalsArtist(artistsRawBytes)
 	if err != nil {
 		return err
+	}
+	for i := range Artists {
+		name := strings.TrimSpace(Artists[i].Name)
+		if strings.EqualFold(name, "Mamonas Assassinas") || strings.EqualFold(name, "Mamonas Assasinans") {
+			Artists[i].Image = "/pict/mamonas.jpg"
+		}
 	}
 
 	locationsRawBytes := FetchData("https://groupietrackers.herokuapp.com/api/locations")
