@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 )
 
 type API struct {
@@ -77,6 +78,10 @@ func reader() ([]Artist, error) {
 	if err := decoder.Decode(&artists); err != nil {
 		log.Fatal(err)
 	}
-
+	for i := range artists {
+		if strings.EqualFold(artists[i].Name, "Mamonas Assassinas") {
+			artists[i].Image = "templates/Mamonas_Assassinas.jpg"
+		}
+	}
 	return artists, nil
 }
