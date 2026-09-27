@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	funct "groupie-tracker/funct"
+	funct "groupie-tracker/functions"
 	"groupie-tracker/structdata"
 	"net/http"
 )

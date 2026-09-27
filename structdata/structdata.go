@@ -131,7 +131,7 @@ func LoadData() error{
 	for i := range Artists {
 		name := strings.TrimSpace(Artists[i].Name)
 		if strings.EqualFold(name, "Mamonas Assassinas") || strings.EqualFold(name, "Mamonas Assasinans") {
-			Artists[i].Image = "/pict/mamonas.jpg"
+			Artists[i].Image = "/picture/mamonas.jpg"
 		}
 	}
 
