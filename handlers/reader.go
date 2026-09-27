@@ -128,7 +128,7 @@ func fetchJSON(url string, target any) error {
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
-		return fmt.Errorf("unexpected status code %d from %s", response.StatusCode, url)
+		return fmt.Errorf("Error: %d from %s", response.StatusCode, url)
 	}
 	return json.NewDecoder(response.Body).Decode(target)
 }
