@@ -13,7 +13,6 @@ func ArtistHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method != http.MethodGet {
-		w.Header().Set("Allow", http.MethodGet)
 		ErrorPage(w, "405: Method Not Allowed", "Artist information is available with a GET request.", http.StatusMethodNotAllowed)
 		return
 	}

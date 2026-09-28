@@ -40,9 +40,7 @@ func artistMatchesSearch(artist Artist, query string) bool {
 		return strings.Contains(strings.ToLower(value), query)
 	}
 
-	if matches(artist.Name) ||
-		matches(strconv.Itoa(artist.CreationDate)) ||
-		matches(artist.FirstAlbum) {
+	if matches(artist.Name) || matches(strconv.Itoa(artist.CreationDate)) || matches(artist.FirstAlbum) {
 		return true
 	}
 
