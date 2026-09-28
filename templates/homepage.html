@@ -13,14 +13,12 @@
       <button type="submit">Search</button>
     </form>
     <div class="artist-grid">
-      {{if .}}
-      {{range .}}
+      {{if .}} {{range .}}
       <a class="artist-card" href="/artist?id={{.ID}}">
         <img src="{{.Image}}" alt="{{.Name}}" />
         <div class="artist-name">{{.Name}}</div>
       </a>
-      {{end}}
-      {{else}}
+      {{end}} {{else}}
       <p class="no-results">
         No artists found.
         <a href="/">Try another search</a>

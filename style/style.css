@@ -123,6 +123,8 @@ img {
 .artist-header h1 {
   text-align: left;
   margin-bottom: 15px;
+  font-size: 60px;
+  white-space: nowrap;
 }
 
 .artist-section {
@@ -184,6 +186,12 @@ img {
   background-color: #f1d06b;
 }
 
+@media (max-width: 800px) {
+  .artist-header h1 {
+    font-size: 45px;
+  }
+}
+
 @media (max-width: 600px) {
   .artist-grid {
     grid-template-columns: 1fr;
@@ -203,6 +211,11 @@ img {
 
   .artist-header {
     flex-direction: column;
+    text-align: center;
+  }
+
+  .artist-header h1 {
+    font-size: 35px;
     text-align: center;
   }
 }
