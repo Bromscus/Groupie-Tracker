@@ -131,7 +131,7 @@ func reader() ([]Artist, error) {
 		}
 
 		if strings.EqualFold(artist.Name, "Mamonas Assassinas") {
-			artist.Image = "style/Mamonas_Assassinas.jpg"
+			artist.Image = "static/images/Mamonas_Assassinas.jpg"
 		}
 
 		artists = append(artists, artist)

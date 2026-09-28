@@ -13,7 +13,6 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method != http.MethodGet {
-		w.Header().Set("Allow", http.MethodGet)
 		ErrorPage(w, "405: Method Not Allowed", "Search is available with a GET request.", http.StatusMethodNotAllowed)
 		return
 	}
