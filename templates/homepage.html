@@ -16,7 +16,7 @@
     <div class="artist-grid">
       {{if .}} {{range .}}
       <a class="artist-card" href="/artist?id={{.ID}}">
-        <img src="{{.Image}}" alt="{{.Name}}" />
+        <img src="{{.Image}}" alt="{{.Name}}" loading="lazy" />
         <div class="artist-name">{{.Name}}</div>
       </a>
       {{end}} {{else}}

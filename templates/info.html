@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>{{.Name}}</title>
+    <link rel="preload" as="image" href="{{.Image}}" />
     <link rel="stylesheet" href="/static/style/style.css" />
     <link rel="icon" type="image/png" href="/static/images/groupie.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,7 +11,12 @@
   <body>
     <main class="artist-page">
       <header class="artist-header">
-        <img class="artist-image" src="{{.Image}}" alt="{{.Name}}" />
+        <img
+          class="artist-image"
+          src="{{.Image}}"
+          alt="{{.Name}}"
+          fetchpriority="high"
+        />
         <div>
           <h1>{{.Name}}</h1>
           <p>Formed: {{.CreationDate}}</p>
