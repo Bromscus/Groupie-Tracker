@@ -8,6 +8,8 @@ The API contains information about the artists such as their names, members, ima
 
 The website also allows users to search for artists and view more detailed information about each artist.
 
+The site also has the header as a way to go back the homepage if clicked on.
+
 ## Authors
 
 - ahmsalem
