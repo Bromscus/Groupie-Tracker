@@ -73,10 +73,10 @@ func LoadData() error {
 }
 
 func reader() ([]Artist, error) {
-	const baseURL = "https://groupietrackers.herokuapp.com/api"
+	const url = "https://groupietrackers.herokuapp.com/api"
 
 	var api API
-	if err := fetchJSON(baseURL, &api); err != nil {
+	if err := fetchJSON(url, &api); err != nil {
 		return nil, err
 	}
 
