@@ -193,6 +193,14 @@ img {
 }
 
 @media (max-width: 600px) {
+  body {
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 56px;
+  }
+
   .artist-grid {
     grid-template-columns: 1fr;
   }
