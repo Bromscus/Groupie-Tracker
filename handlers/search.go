@@ -2,7 +2,6 @@ package functions
 
 import (
 	"net/http"
-	"strconv"
 	"strings"
 )
 
@@ -39,39 +38,8 @@ func artistMatchesSearch(artist Artist, query string) bool {
 		return strings.Contains(strings.ToLower(value), query)
 	}
 
-	if matches(artist.Name) || matches(strconv.Itoa(artist.CreationDate)) || matches(artist.FirstAlbum) {
+	if matches(artist.Name) {
 		return true
 	}
-
-	for _, member := range artist.Members {
-		if matches(member) {
-			return true
-		}
-	}
-
-	for _, location := range artist.Locations {
-		if matches(location) {
-			return true
-		}
-	}
-
-	for _, date := range artist.Dates {
-		if matches(date) {
-			return true
-		}
-	}
-
-	for location, dates := range artist.Relations {
-		if matches(location) {
-			return true
-		}
-
-		for _, date := range dates {
-			if matches(date) {
-				return true
-			}
-		}
-	}
-
 	return false
 }
