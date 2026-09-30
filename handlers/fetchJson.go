@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func fetchJSON(url string, target any) error {
+func fetchJSON(url string, info any) error {
 	response, err := http.Get(url)
 	if err != nil {
 		return err
@@ -17,5 +17,5 @@ func fetchJSON(url string, target any) error {
 		return fmt.Errorf("Error: %d from %s", response.StatusCode, url)
 	}
 
-	return json.NewDecoder(response.Body).Decode(target)
+	return json.NewDecoder(response.Body).Decode(info)
 }

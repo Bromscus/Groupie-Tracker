@@ -23,7 +23,7 @@ type Artist struct {
 	Relations    map[string][]string `json:"-"`
 }
 
-type artistRecord struct {
+type artistInfo struct {
 	ID           int      `json:"id"`
 	Image        string   `json:"image"`
 	Name         string   `json:"name"`
@@ -80,8 +80,8 @@ func reader() ([]Artist, error) {
 		return nil, err
 	}
 
-	var records []artistRecord
-	if err := fetchJSON(api.Artists, &records); err != nil {
+	var info []artistInfo
+	if err := fetchJSON(api.Artists, &info); err != nil {
 		return nil, err
 	}
 
@@ -115,19 +115,19 @@ func reader() ([]Artist, error) {
 		relationsByID[relation.ID] = relation.DatesLocations
 	}
 
-	artists := make([]Artist, 0, len(records))
+	artists := make([]Artist, 0, len(info))
 
-	for _, record := range records {
+	for _, Info := range info {
 		artist := Artist{
-			ID:           record.ID,
-			Image:        record.Image,
-			Name:         record.Name,
-			Members:      record.Members,
-			CreationDate: record.CreationDate,
-			FirstAlbum:   record.FirstAlbum,
-			Locations:    locationsByID[record.ID],
-			Dates:        datesByID[record.ID],
-			Relations:    relationsByID[record.ID],
+			ID:           Info.ID,
+			Image:        Info.Image,
+			Name:         Info.Name,
+			Members:      Info.Members,
+			CreationDate: Info.CreationDate,
+			FirstAlbum:   Info.FirstAlbum,
+			Locations:    locationsByID[Info.ID],
+			Dates:        datesByID[Info.ID],
+			Relations:    relationsByID[Info.ID],
 		}
 
 		if strings.EqualFold(artist.Name, "Mamonas Assassinas") {

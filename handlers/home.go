@@ -7,12 +7,12 @@ import (
 // templ.Execute basically means we write the final HTML into the HTTP response
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
-		ErrorPage(w, "404: page not found", "Please check that the Website address is spelled correctly or go to our home page.", http.StatusNotFound)
+		ErrorPage(w, E404, E404Msg, http.StatusNotFound)
 		return
 	}
 
 	if r.Method != http.MethodGet {
-		ErrorPage(w, "405: Method Not Allowed", "This page is available with a GET request.", http.StatusMethodNotAllowed)
+		ErrorPage(w, E405, E405HomeMsg, http.StatusMethodNotAllowed)
 		return
 	}
 
