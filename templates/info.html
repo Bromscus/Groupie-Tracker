@@ -60,8 +60,9 @@
         <ul>
           {{range $location, $dates := .Relations}}
           <li>
-            <strong>{{$location}}</strong>: {{range $index, $date :=
-            $dates}}{{if $index}}, {{end}}{{$date}}{{end}}
+            <strong>{{$location}}</strong>: {{range $index, $date := $dates}}
+            {{if $index}}, 
+            {{end}}{{$date}}{{end}}
           </li>
           {{else}}
           <li>No relations available.</li>

@@ -139,3 +139,17 @@ func reader() ([]Artist, error) {
 
 	return artists, nil
 }
+
+// //API root
+//    ↓
+// gets URLs for artists / locations / dates / relations
+//    ↓
+// downloads each JSON
+//    ↓
+// stores each one in Go structs
+//    ↓
+// matches everything using artist ID
+//    ↓
+// builds one final []Artist
+//    ↓
+// stores it in global Artists
